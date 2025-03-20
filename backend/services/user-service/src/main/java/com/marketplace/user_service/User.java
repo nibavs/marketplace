@@ -19,4 +19,11 @@ public class User {
     private String firstName;
     private String lastName;
     private String phoneNumber;
+
+    public User(UserDTO userDTO) {
+        this.email = userDTO.email();
+        this.firstName = userDTO.firstName();
+        this.lastName = userDTO.lastName();
+        this.phoneNumber = userDTO.phoneNumber();
+    }
 }

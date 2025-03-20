@@ -1,5 +1,6 @@
 package com.marketplace.user_service;
 
+import com.marketplace.user_service.exception.UserCreationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,9 +21,17 @@ public class UserController {
     }
 
     @PostMapping("/users")
-    public ResponseEntity<String> createUser(@RequestBody UserDTO user) {
-//        userRepository.save(user);
-        kafkaTemplate.send("user-crud", user);
+    public ResponseEntity<String> createUser(@RequestBody UserDTO userDTO) {
+        User user = new User(userDTO);
+
+        try {
+            userRepository.save(user);
+        } catch (Exception e) {
+            throw new UserCreationException("Failed to save user", e);
+        }
+
+        kafkaTemplate.send("user-crud", userDTO);
+
         return ResponseEntity.ok("User Created");
     }
 
